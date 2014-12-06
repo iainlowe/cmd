@@ -4,4 +4,4 @@ build:
 	go build
 
 install:
-	cp sshpit /usr/bin/sshpit
+	go install
