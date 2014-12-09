@@ -211,11 +211,11 @@ func fakeShellCommand(f *os.File, cmd string) {
 }
 
 func passwordCallback(c ssh.ConnMetadata, pass []byte) (*ssh.Permissions, error) {
-	// if c.User() == "root" && string(pass) == "tiger" {
-	// 	log.Printf("%s login successful for %s with pass '%s'\n", c.RemoteAddr(), c.User(), string(pass))
-	// 	return nil, nil
-	// }
-	// return nil, fmt.Errorf("password rejected for %q '%s'", c.User(), pass)
+	if c.User() == "root" {
+	 	log.Printf("%s login successful for %s with pass '%s'\n", c.RemoteAddr(), c.User(), string(pass))
+	 	return nil, nil
+	}
+	return nil, fmt.Errorf("password rejected for %q '%s'", c.User(), string(pass))
 
 	log.Printf("%s login successful for %s with pass '%s'\n", c.RemoteAddr(), c.User(), string(pass))
 	return nil, nil
