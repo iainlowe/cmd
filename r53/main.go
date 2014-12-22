@@ -108,10 +108,7 @@ func getRRs() []RREntry {
 }
 
 var zone string
-var showPrivate bool
-var showAll bool
-var quiet bool
-var verbose bool
+var showPrivate, showAll, quiet, verbose, sshconfig bool
 
 type RRWrapper struct {
 	rrs *[]RREntry
@@ -127,6 +124,8 @@ func init() {
 	flag.BoolVarP(&quiet, "quiet", "q", false, "Terse output")
 	flag.BoolVarP(&verbose, "verbose", "v", false, "Long output")
 	flag.BoolVarP(&showAll, "show-all", "A", false, "Show all record types (incl. TXT MX etc.); by default show only CNAME and A records")
+
+	flag.BoolVarP(&sshconfig, "ssh-config", "S", false, "Output in SSH config format")
 
 	flag.Usage = func() {
 		fmt.Println(`You need the following definitions in your env:
@@ -162,6 +161,14 @@ func main() {
 		}
 
 		if !showPrivate && (strings.HasPrefix(rr.Value, "192.") || strings.HasPrefix(rr.Value, "10.")) {
+			continue
+		}
+
+		if sshconfig {
+			nmparts := strings.Split(rr.Name, ".")
+			if rr.Type == "A" && len(nmparts) > 2 && nmparts[0] != "*" {
+				fmt.Printf("Host %s\nHostname %s\nUser ubuntu\n\n", strings.Split(rr.Name, ".")[0], rr.Name)
+			}
 			continue
 		}
 
