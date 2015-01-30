@@ -15,12 +15,14 @@ import (
 func main() {
 	var fpath, bucketname, objname string
 
-	flag.StringVarP(&fpath, "file", "f", "", "The file to upload (required)")
 	flag.StringVarP(&bucketname, "bucket", "b", "mm-tests", "The bucket to upload to")
 	flag.StringVarP(&objname, "name", "n", "", "The name of the uploaded object (defaults to value passed to -f/--file)")
 
-	// var name = flag.String("n", "", "bucket name")
 	flag.Parse()
+
+	if flag.NArg() > 0 {
+		fpath = flag.Args()[0]
+	}
 
 	if fpath == "" {
 		fmt.Println("abort: you must specify a file to upload")
@@ -35,7 +37,7 @@ func main() {
 	}
 
 	c := s3.New(auth, aws.USEast)
-	b := c.Bucket("mm-tests")
+	b := c.Bucket(bucketname)
 
 	f, err := os.Open(fpath)
 	if err != nil {
