@@ -11,9 +11,9 @@ import (
 	"strings"
 )
 
-// var writechanges *bool = flag.Bool("w", false, "write result to (source) file instead of stdout")
 var outputfile *string = flag.String("o", "", "write result to this output file")
 var overwrite *bool = flag.Bool("w", false, "overwrite output file if it exists")
+var verbose *bool = flag.Bool("v", false, "be verbose")
 var sprefix *string = flag.String("p", "C", "prepend this string to generated function names")
 
 func init() {
@@ -219,7 +219,7 @@ func main() {
 		w, _ = os.Create(*outputfile)
 	}
 
-	fmt.Fprintln(os.Stderr, "output", *outputfile)
+	if *verbose { fmt.Fprintln(os.Stderr, "output", *outputfile) }
 
 	for _, fname := range flag.Args() {
 		if !strings.HasSuffix(fname, ".h") {
