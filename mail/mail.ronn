@@ -1,0 +1,24 @@
+mail(1) -- a drop-in replacement for bsd-mailx(1)
+=================================================
+
+## SYNOPSIS
+
+`mail` [-e] [-s SUBJECT] RCPT..
+
+## DESCRIPTION
+
+Mail is a drop-in replacement for the actual sending parts of `bsd-mailx(1)`.
+
+It was written when I realized that I never use the mail reading capabilities
+of `bsd-mailx` and that I needed a mailer tool that would work without requiring
+a bunch of dependencies to be installed.
+
+It supports most of the useful `bsd-mailx` flags.
+
+## OPTIONS
+
+  * `-e`, `--skip-empty`:
+    Skip empty bodies. Including this flag will cause mail without a body
+    to be ignored.
+
+
