@@ -13,6 +13,7 @@ import (
 
 // var writechanges *bool = flag.Bool("w", false, "write result to (source) file instead of stdout")
 var outputfile *string = flag.String("o", "", "write result to this output file")
+var overwrite *bool = flag.Bool("w", false, "overwrite output file if it exists")
 var sprefix *string = flag.String("p", "C", "prepend this string to generated function names")
 
 func init() {
@@ -209,7 +210,11 @@ func main() {
 	if *outputfile == "" || *outputfile == "-" {
 		w = os.Stdout
 	} else if _, err := os.Stat(*outputfile); err == nil {
-		panic("output file exists!")
+		if *overwrite {
+			w = os.Open(*outputfile)
+		} else {
+			panic("output file exists!")
+		}
 	} else {
 		w, _ = os.Create(*outputfile)
 	}
