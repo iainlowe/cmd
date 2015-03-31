@@ -211,7 +211,7 @@ func main() {
 		w = os.Stdout
 	} else if _, err := os.Stat(*outputfile); err == nil {
 		if *overwrite {
-			w = os.Open(*outputfile)
+			w, _ = os.Open(*outputfile)
 		} else {
 			panic("output file exists!")
 		}
