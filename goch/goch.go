@@ -133,7 +133,7 @@ func generate(src string) {
 
 			plist := strings2params(params)
 
-			Printf("func %s%s (", sprefix, funcName)
+			Printf("func %s%s (", *sprefix, funcName)
 
 			pstrings := []string{}
 
