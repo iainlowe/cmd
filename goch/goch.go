@@ -128,11 +128,15 @@ func generate(src string) {
 			funcName := trim(split(split(line, "(")[0], " ")[1])
 			params := split(split(split(line, "(")[1], ")")[0], ",")
 
+			parg := []string{}
 			for i, p := range params {
 				params[i] = trim(p)
+				if params[i] != "" {
+					parg = append(parg, params[i])
+				}
 			}
 
-			plist := strings2params(params)
+			plist := strings2params(parg)
 
 			Printf("func %s%s(", *sprefix, funcName)
 
@@ -172,7 +176,11 @@ func generate(src string) {
 				Println()
 			}
 
-			Print("v, err := C.", funcName, "(")
+			if returnType != "void" {
+				Print("\tv, err := C.", funcName, "(")
+			} else {
+				Print("\t_, err := C.", funcName, "(")
+			}
 
 			cargs := []string{}
 
@@ -187,15 +195,15 @@ func generate(src string) {
 
 			Print(strings.Join(cargs, ", "))
 
-			Print(")\n")
-			
+			Print(")\n\n\t")
+
 			if returnType != "void" {
-				Print("\treturn v, err")
+				Print("return " + returnType + "(v), err")
 			} else {
-				Print("\treturn err")
+				Print("return err")
 			}
 
-			Println("}\n")
+			Println("\n}\n")
 
 			// fmt.Println(returnType, funcName, plist)
 		}
@@ -222,7 +230,9 @@ func main() {
 		w, _ = os.Create(*outputfile)
 	}
 
-	if *verbose { fmt.Fprintln(os.Stderr, "output", *outputfile) }
+	if *verbose {
+		fmt.Fprintln(os.Stderr, "output", *outputfile)
+	}
 
 	for _, fname := range flag.Args() {
 		if !strings.HasSuffix(fname, ".h") {
