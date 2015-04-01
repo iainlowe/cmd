@@ -144,10 +144,12 @@ func generate(src string) {
 
 			Print(strings.Join(pstrings, ", "))
 
-			Print(")")
+			Print(") ")
 
 			if returnType != "void" {
-				Print(" ", returnType)
+				Print("(", returnType, ", error)")
+			} else {
+				Print("error")
 			}
 
 			Print(" {\n")
@@ -170,13 +172,13 @@ func generate(src string) {
 				Println()
 			}
 
-			if returnType != "void" {
-				Print("\treturn ")
-			} else {
-				Print("\t")
-			}
+			Print("v, err := C.", funcName, "(")
 
-			Print("C.", funcName, "(")
+			if returnType != "void" {
+				Print("\treturn v, err")
+			} else {
+				Print("\treturn err")
+			}
 
 			cargs := []string{}
 
