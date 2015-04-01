@@ -104,18 +104,19 @@ var (
 	repo *string = flag.String("C", ".", "generate report on the repo in this folder")
 )
 
-func main() {
-	flag.Usage = func() {
-		fmt.Println("usage: gr [options]\n\ngr generates reports on git repos\n\nOPTIONS")
-		flag.PrintDefaults()
-	}
-	flag.Parse()
-
-	loadMailMap()
-
+func collectRecords() {
 	cmd := exec.Command("git", append(strings.Split("log --shortstat --no-merges --format=format:%cE", " "), "-C", *repo)...)
 
-	b, _ := cmd.Output()
+	b, err := cmd.Output()
+
+	if err != nil {
+		if strings.Contains(err.Error(), "128") {
+			fmt.Println("abort:", "not a git repo!")
+			os.Exit(1)
+		}
+		fmt.Println("abort:", err)
+		os.Exit(1)
+	}
 
 	rs := records{}
 	r := record{}
@@ -153,4 +154,15 @@ func main() {
 	cmd.Run()
 
 	fmt.Print(rs)
+}
+
+func main() {
+	flag.Usage = func() {
+		fmt.Println("usage: gr [options]\n\ngr generates reports on git repos\n\nOPTIONS")
+		flag.PrintDefaults()
+	}
+	flag.Parse()
+
+	loadMailMap()
+	collectRecords()
 }
