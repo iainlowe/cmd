@@ -174,12 +174,6 @@ func generate(src string) {
 
 			Print("v, err := C.", funcName, "(")
 
-			if returnType != "void" {
-				Print("\treturn v, err")
-			} else {
-				Print("\treturn err")
-			}
-
 			cargs := []string{}
 
 			for _, p := range plist {
@@ -194,6 +188,13 @@ func generate(src string) {
 			Print(strings.Join(cargs, ", "))
 
 			Print(")\n")
+			
+			if returnType != "void" {
+				Print("\treturn v, err")
+			} else {
+				Print("\treturn err")
+			}
+
 			Println("}\n")
 
 			// fmt.Println(returnType, funcName, plist)
