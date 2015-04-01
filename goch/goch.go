@@ -164,7 +164,7 @@ func generate(src string) {
 					Print("\t", p.CName, " := C.int(", p.Name, ")\n")
 				case "char**":
 					Print("\t", p.CName, " := []*C.char{}\n")
-					Print("\tfor _, val := range ", p.Name, " {\n\t\tcval := C.CString(val)\n\t\tdefer C.free(unsafe.Pointer(val))\n\t\t", p.CName, " = append(", p.CName, ", cval)\n\t}\n")
+					Print("\tfor _, val := range ", p.Name, " {\n\t\tcval := C.CString(val)\n\t\tdefer C.free(unsafe.Pointer(tcval))\n\t\t", p.CName, " = append(", p.CName, ", cval)\n\t}\n")
 				}
 
 				Println()
