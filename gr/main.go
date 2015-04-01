@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -88,7 +89,7 @@ var mailmap map[string]string = map[string]string{}
 var abs = func(s string) string { r, _ := filepath.Abs(s); return r }
 
 func loadMailMap() {
-	for path := "."; abs(path) != "/"; path += "/.." {
+	for path := *repo; abs(path) != "/"; path += "/.." {
 		infos, _ := ioutil.ReadDir(path)
 		for _, info := range infos {
 			if info.Name() == ".mailmap" {
@@ -99,10 +100,20 @@ func loadMailMap() {
 	}
 }
 
+var (
+	repo *string = flag.String("C", ".", "generate report on the repo in this folder")
+)
+
 func main() {
+	flag.Usage = func() {
+		fmt.Println("usage: gr [options]\n\ngr generates reports on git repos\n\nOPTIONS")
+		flag.PrintDefaults()
+	}
+	flag.Parse()
+
 	loadMailMap()
 
-	cmd := exec.Command("git", strings.Split("log --shortstat --no-merges --format=format:%cE", " ")...)
+	cmd := exec.Command("git", append(strings.Split("log --shortstat --no-merges --format=format:%cE", " "), "-C", *repo)...)
 
 	b, _ := cmd.Output()
 
