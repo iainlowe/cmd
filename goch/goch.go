@@ -134,7 +134,7 @@ func generate(src string) {
 
 			plist := strings2params(params)
 
-			Printf("func %s%s (", *sprefix, funcName)
+			Printf("func %s%s(", *sprefix, funcName)
 
 			pstrings := []string{}
 
@@ -159,12 +159,12 @@ func generate(src string) {
 					Print("\tdefer C.free(unsafe.Pointer(", p.CName, "))\n")
 				case "short":
 					Print("\t", p.CName, " := C.short(0)\n")
-					Print("\tif ", p.Name, " { ", p.CName, " = C.short(1) }\n")
+					Print("\tif ", p.Name, " {\n\t\t", p.CName, " = C.short(1)\n\t}\n")
 				case "int":
 					Print("\t", p.CName, " := C.int(", p.Name, ")\n")
 				case "char**":
 					Print("\t", p.CName, " := []*C.char{}\n")
-					Print("\tfor _, val := range ", p.Name, " {\n\t\tcval := C.CString(val)\n\t\tdefer C.free(unsafe.Pointer(&val))\n\t\t", p.CName, " = append(", p.CName, ", cval)\n\t}\n")
+					Print("\tfor _, val := range ", p.Name, " {\n\t\tcval := C.CString(val)\n\t\tdefer C.free(unsafe.Pointer(val))\n\t\t", p.CName, " = append(", p.CName, ", cval)\n\t}\n")
 				}
 
 				Println()
