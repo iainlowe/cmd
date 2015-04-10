@@ -84,6 +84,10 @@ func main() {
 
 	flag.Parse()
 
+	if flag.NArg() != 1 {
+		flag.Usage()
+	}
+
 	pkgname := flag.Args()[0]
 
 	if *fskips != "" {
