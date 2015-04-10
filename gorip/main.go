@@ -86,6 +86,7 @@ func main() {
 
 	if flag.NArg() != 1 {
 		flag.Usage()
+		os.Exit(5)
 	}
 
 	pkgname := flag.Args()[0]
