@@ -77,7 +77,7 @@ func ctypeToGoType(ctype string) string {
 	case "short":
 		return "bool"
 	case "float":
-		return "float"
+		return "float32"
 	default:
 		log.Fatalln("unknown C type", ctype)
 	}
