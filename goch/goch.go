@@ -115,14 +115,19 @@ func generate(src string) {
 	Println("import \"C\"\n")
 	Println("import \"unsafe\"\n")
 
+	lastComment := ""
+
 	for _, line := range split(string(b), "\n") {
 		line = strings.TrimSpace(line)
 
 		switch {
 		case line == "":
+			lastComment = ""
 			continue
-		case prefix(line, "#") || prefix(line, "/"):
+		case prefix(line, "#"):
 			continue
+		case prefix(line, "//"):
+			lastComment = line
 		default:
 			line = trim(replace(line, "extern", "", -1))
 
@@ -139,6 +144,11 @@ func generate(src string) {
 			}
 
 			plist := strings2params(parg)
+
+			if lastComment != "" {
+				Println(lastComment)
+				lastComment = ""
+			}
 
 			Printf("func %s%s(", *sprefix, funcName)
 
@@ -170,6 +180,8 @@ func generate(src string) {
 					Print("\tif ", p.Name, " {\n\t\t", p.CName, " = C.short(1)\n\t}\n")
 				case "int":
 					Print("\t", p.CName, " := C.int(", p.Name, ")\n")
+				case "float":
+					Print("\t", p.CName, " := C.float(", p.Name, ")\n")
 				case "char**":
 					Print("\t", p.CName, " := []*C.char{}\n")
 					Print("\tfor _, val := range ", p.Name, " {\n\t\tcval := C.CString(val)\n\t\tdefer C.free(unsafe.Pointer(cval))\n\t\t", p.CName, " = append(", p.CName, ", cval)\n\t}\n")
