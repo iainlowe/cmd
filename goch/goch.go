@@ -14,6 +14,7 @@ import (
 var outputfile *string = flag.String("o", "", "write result to this output file")
 var overwrite *bool = flag.Bool("w", false, "overwrite output file if it exists")
 var verbose *bool = flag.Bool("v", false, "be verbose")
+var version *bool = flag.Bool("version", false, "display version and exit")
 var sprefix *string = flag.String("p", "C", "prepend this string to generated function names")
 
 func init() {
@@ -78,6 +79,8 @@ func ctypeToGoType(ctype string) string {
 		return "bool"
 	case "float":
 		return "float32"
+	case "void":
+		return ""
 	default:
 		log.Fatalln("unknown C type", ctype)
 	}
@@ -132,6 +135,7 @@ func generate(src string) {
 			line = trim(replace(line, "extern", "", -1))
 
 			returnType := split(line, " ")[0]
+			goReturnType := ctypeToGoType(returnType)
 			funcName := trim(split(split(line, "(")[0], " ")[1])
 			params := split(split(split(line, "(")[1], ")")[0], ",")
 
@@ -163,7 +167,7 @@ func generate(src string) {
 			Print(") ")
 
 			if returnType != "void" {
-				Print("(", returnType, ", error)")
+				Print("(", goReturnType, ", error)")
 			} else {
 				Print("error")
 			}
@@ -212,7 +216,7 @@ func generate(src string) {
 			Print(")\n\n\t")
 
 			if returnType != "void" {
-				Print("return " + returnType + "(v), err")
+				Print("return " + goReturnType + "(v), err")
 			} else {
 				Print("return err")
 			}
@@ -226,6 +230,11 @@ func generate(src string) {
 
 func main() {
 	flag.Parse()
+
+	if *version {
+		fmt.Println("0.1.1")
+		os.Exit(0)
+	}
 
 	if flag.NArg() == 0 {
 		flag.Usage()
