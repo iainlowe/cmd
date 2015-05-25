@@ -231,8 +231,6 @@ func generate(src string) {
 				Println()
 			}
 
-			Println("\tC.errno = 0")
-
 			if returnType != "void" {
 				Print("\tv, err := C.", funcName, "(")
 			} else {
@@ -251,10 +249,8 @@ func generate(src string) {
 
 			Print(strings.Join(cargs, ", "))
 
-			Println(")")
-			Println("\tC.errno = 0\n")
+			Print(")\n\n\t")
 
-			Print("\t")
 			switch returnType {
 			case "void":
 				Print("return err")
