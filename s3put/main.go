@@ -15,6 +15,11 @@ import (
 func main() {
 	var fpath, bucketname, objname string
 
+	flag.Usage = func() {
+		fmt.Println("usage: s3put <file>\n\nUpload a file to S3.\n\nYou need to have AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY defined in your ENV.\n\nOPTIONS\n")
+		flag.PrintDefaults()
+	}
+
 	flag.StringVarP(&bucketname, "bucket", "b", "mm-tests", "The bucket to upload to")
 	flag.StringVarP(&objname, "name", "n", "", "The name of the uploaded object (defaults to value passed to -f/--file)")
 
@@ -58,5 +63,6 @@ func main() {
 	}
 
 	fmt.Printf("%s -> %s/%s\n", fpath, bucketname, objname)
+	fmt.Println(b.URL(objname))
 	// err := b.PutReader(flag.Args()[0], "binary/octet-stream", perm)
 }
