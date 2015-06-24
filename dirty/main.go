@@ -12,6 +12,7 @@ import (
 
 var (
 	quiet = flag.Bool("q", false, "be quiet (just list dirs)")
+	root  = flag.String("C", ".", "root for search start")
 )
 
 func fullrel(s string) string {
@@ -57,6 +58,9 @@ func findDirty(d string) {
 }
 
 func main() {
+	flag.Usage = func() {
+		fmt.Println("usage: dirty [-C <dir>] [-q]\nList dirty repositories.")
+	}
 	flag.Parse()
-	findDirty(".")
+	findDirty(*root)
 }
