@@ -277,6 +277,8 @@ func generate(src string) {
 				}
 			case "char*":
 				Print("\n\n\treturn C.GoString(v)", estring)
+			case "short":
+				Print("\n\n\treturn v > 0", estring)
 			default:
 				Print("\n\n\treturn "+goReturnType+"(v)", estring)
 			}
