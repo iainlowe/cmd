@@ -276,7 +276,7 @@ func generate(src string) {
 					Print("\n\n\treturn err")
 				}
 			case "char*":
-				Print("\n\n\treturn C.GoString(v)", estring)
+				Print("\n\n\ttmp := C.GoString(v)\t// copy the string so ownership doesn't get confused\n\treturn (v + \" \")[:len(v)]", estring)
 			case "short":
 				Print("\n\n\treturn v > 0", estring)
 			default:
